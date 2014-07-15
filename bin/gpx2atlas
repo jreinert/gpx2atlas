@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require 'gpx2atlas'
+require 'optparse'
+
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner "Usage: #{__FILE__} <options> <input_gpx> <output_gpx>"
+  opts.separator ""
+  opts.separator "Options:"
+
+  opts.on("-s", "--scale X", "Use the scale 1:X") do |scale|
+    options[:scale] = scale
+  end
+
+  opts.on("-d", "--dimensions DIMENSIONS", "Set DIMENSIONS of Atlas tiles in the form WIDTHxHEIGHT where WIDTH and HEIGHT are both given in mm") do |dims|
+    width, height = dims.split(/[xX]/).map(&:to_i)
+    options[:medium_size] = {width: width, height: height}
+  end
+end
+
+gpx = Gpx2Atlas.coverage_layer(ARGV[-2], options)
+
+gpx.write(ARGV[-1])
