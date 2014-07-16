@@ -25,7 +25,7 @@ module Gpx2Atlas
 
       break unless (range.begin...range.end).include?(range.begin + count)
 
-      range = (range.begin + count)...range.end
+      range = (range.begin + count - 1)...range.end
     end
 
     result = GPXFile.new
