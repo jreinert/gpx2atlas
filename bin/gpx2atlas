@@ -3,20 +3,45 @@
 require 'gpx2atlas'
 require 'optparse'
 
-options = {}
+options = {overlap: {x: 0, y: 0}}
 
-OptionParser.new do |opts|
-  opts.banner "Usage: #{__FILE__} <options> <input_gpx> <output_gpx>"
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{__FILE__} <options> <input_gpx> <output_gpx>"
   opts.separator ""
   opts.separator "Options:"
 
   opts.on("-s", "--scale X", "Use the scale 1:X") do |scale|
-    options[:scale] = scale
+    options[:scale] = scale.to_f
   end
 
   opts.on("-d", "--dimensions DIMENSIONS", "Set DIMENSIONS of Atlas tiles in the form WIDTHxHEIGHT where WIDTH and HEIGHT are both given in mm") do |dims|
-    width, height = dims.split(/[xX]/).map(&:to_i)
+    width, height = dims.split(/[xX]/).map(&:to_f)
     options[:medium_size] = {width: width, height: height}
+  end
+
+  opts.on("-o", "--overlap X:Y", "Overlap Atlas tiles X percent horizontally and Y percent vertically. Set it in the form X:Y. Default is 0:0") do |dims|
+    x, y = dims.split(':').map(&:to_f)
+    options[:overlap] = {x: x / 100, y: y / 100}
+  end
+
+  opts.on_tail("-h", "--help", "Show this message and exit") do
+    puts opts
+    exit
+  end
+
+end
+
+parser.parse!
+
+unless options[:scale] && options[:medium_size] && ARGV[-2] && ARGV[-1]
+  puts parser.help
+  exit 1
+end
+
+if File.exists? ARGV[-1]
+  print "File #{ARGV[-1]} exists! Overwrite? (y/n): "
+  unless $stdin.gets.chomp =~ /^[yY]$/
+    exit
   end
 end
 
