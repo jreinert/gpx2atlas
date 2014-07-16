@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Joakim Reinert"]
   spec.email         = ["mail@jreinert.com"]
   spec.summary       = %q{Tiny utility to create qgis atlas coverage layers from tracks}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/jreinert/gpx2atlas"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
