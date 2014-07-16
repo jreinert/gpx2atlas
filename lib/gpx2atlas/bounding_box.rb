@@ -77,14 +77,14 @@ module Gpx2Atlas
     def self.fit(coordinates, options = {})
       result = BoundingBox.new(coordinates.first[0], coordinates.first[1], options)
       last_coord = coordinates.first
-      coordinates[1..-1].each do |(lat_deg, lon_deg)|
+      coordinates[1..-1].each_with_index do |(lat_deg, lon_deg), i|
         unless result.includes?(lat_deg, lon_deg)
           lat_deg_delta = lat_deg - last_coord[0]
           lon_deg_delta = lon_deg - last_coord[1]
 
           new_box = result.move(lat_deg_delta, lon_deg_delta)
 
-          unless coordinates.all? {|coord| new_box.includes?(coord[0], coord[1])}
+          unless coordinates[0..i].all? {|coord| new_box.includes?(coord[0], coord[1])}
             return false
           end
 
